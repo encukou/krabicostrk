@@ -113,7 +113,6 @@ class Game:
                 sprite.x = behind_x * TILE_SIZE
                 sprite.y = behind_y * TILE_SIZE
             else:
-                print(behind_objects)
                 return
         self.player_x = new_x
         self.player_y = new_y
