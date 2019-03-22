@@ -1,5 +1,6 @@
 import math
 import time
+import sys
 
 import pyglet
 
@@ -28,6 +29,13 @@ tile_chars = {
     '*': '$.',
     '+': '@.',
 }
+
+
+try:
+    levels_filename = sys.argv[1]
+except IndexError:
+    levels_filename = 'levels.txt'
+
 
 window = pyglet.window.Window(resizable=True)
 
@@ -193,28 +201,7 @@ class LevelSelector:
         pass
 
 
-def load_level(filename, caption):
-    result = {}
-    with open(filename, encoding='utf-8') as file:
-        for line in file:
-            line = line.rstrip()
-            if not line:
-                continue
-            if line == caption:
-                for y, line in enumerate(file):
-                    line = line.rstrip()
-                    if all(c in tile_chars for c in line):
-                        for x, char in enumerate(line):
-                            if char != ' ':
-                                result[x, y] = tile_chars[char]
-                    else:
-                        break
-                return result
-    raise ValueError(f'{caption} not found in {filename}')
-
-
-level = load_level('levels.txt', 'Level 0')
-state = LevelSelector('levels.txt')
+state = LevelSelector(levels_filename)
 
 
 @window.event
