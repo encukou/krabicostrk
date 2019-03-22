@@ -22,7 +22,7 @@ tile_chars = {
     '+': '@.',
 }
 
-window = pyglet.window.Window()
+window = pyglet.window.Window(resizable=True)
 
 def make_sprite(image):
     sprite = pyglet.sprite.Sprite(image)
@@ -30,17 +30,24 @@ def make_sprite(image):
     return sprite
 
 
+class Level:
+    def __init__(self, name, chars):
+        self.name = name
+        self.chars = chars
+        self.width = max(x for x, y in self.chars)
+        self.height = max(y for x, y in self.chars)
+
+
 class Game:
     def __init__(self, level):
+        self.level = level
         self.player_x = 0
         self.player_y = 0
         self.player_sprite = make_sprite(tile_images['@'])
-        self.init_level(level)
 
-    def init_level(self, level):
         self.objects = {}
         self.batch = pyglet.graphics.Batch()
-        for (x, y), chars in level.items():
+        for (x, y), chars in level.chars.items():
             for char in chars:
                 if char == '@':
                     self.player_x = x
@@ -54,13 +61,27 @@ class Game:
                 sprite.char = char
                 self.objects.setdefault((x, y), {})[char] = sprite
 
+
     def draw(self):
+        scale = min(
+            window.width / (self.level.width + 3) / TILE_SIZE,
+            window.height / (self.level.height + 3) / TILE_SIZE,
+        )
+        pyglet.gl.glTranslatef(window.width / 2, window.height / 2, 1)
+        pyglet.gl.glScalef(scale, scale, 1)
+        pyglet.gl.glTranslatef(
+            -(self.level.width+1) * TILE_SIZE / 2,
+            -(self.level.height+1) * TILE_SIZE / 2,
+            0,
+        )
         self.batch.draw()
         self.player_sprite.x = self.player_x * TILE_SIZE
         self.player_sprite.y = self.player_y * TILE_SIZE
         if self.is_won():
-            self.player_sprite.y += abs(math.sin(time.time() * 10)) * TILE_SIZE / 4
+            jump = abs(math.sin(time.time() * 10))
+            self.player_sprite.y += jump * TILE_SIZE / 4
         self.player_sprite.draw()
+        pyglet.gl.glLoadIdentity()
 
     def move(self, dx, dy):
         if self.is_won():
@@ -111,29 +132,28 @@ class LevelSelector:
                     current_y += 1
                 else:
                     if current_level:
-                        levels.append((current_name, current_level))
+                        levels.append(Level(current_name, current_level))
                     current_level = {}
                     current_name = line
                     current_y = 0
         if current_level:
-            levels.append((current_name, current_level))
+            levels.append(Level(current_name, current_level))
         self.levels = levels
         self.index = 0
-        self.levels_on_screen = (window.height // TILE_SIZE)
         self.player_sprite = make_sprite(tile_images['@'])
-        self.player_sprite.y = self.levels_on_screen // 2 * TILE_SIZE
         self.game = None
 
     def draw(self):
         if self.game:
             self.game.draw()
         else:
+            levels_on_screen = (window.height // TILE_SIZE)
+            self.player_sprite.y = levels_on_screen // 2 * TILE_SIZE
             label = pyglet.text.Label(font_size=TILE_SIZE / 2, x=TILE_SIZE)
-            _los = self.levels_on_screen
-            for y in range(_los):
-                index = (self.index + y - _los // 2) % len(self.levels)
-                label.text, level = self.levels[index]
-                label.y = (_los - y - 1 + 3/8) * TILE_SIZE
+            for y in range(levels_on_screen):
+                index = (self.index + y - levels_on_screen // 2)
+                label.text = self.levels[index % len(self.levels)].name
+                label.y = (levels_on_screen - y - 1 + 3/8) * TILE_SIZE
                 label.draw()
             self.player_sprite.draw()
 
@@ -147,8 +167,7 @@ class LevelSelector:
 
     def enter(self):
         if not self.game:
-            name, level = self.levels[self.index]
-            self.game = Game(level)
+            self.game = Game(self.levels[self.index])
         elif self.game.is_won():
             self.game = None
 
