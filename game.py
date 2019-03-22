@@ -6,11 +6,18 @@ import pyglet
 
 TILE_SIZE = 32
 
+# Images are from https://kenney.nl/assets/sokoban
+
+# For level definition, see "Making your own levels"
+# in http://www.sneezingtiger.com/sokoban/docs.html
+
+base = 'kenney-sokoban-pack/PNG/Default size/'
+face_image = pyglet.image.load(base + 'playerFace.png')
 tile_images = {
-    '@': pyglet.image.load('img/player.png'),
-    '#': pyglet.image.load('img/wall.png'),
-    '$': pyglet.image.load('img/box.png'),
-    '.': pyglet.image.load('img/goal.png'),
+    '@': pyglet.image.load(base + 'Player/player_05.png'),
+    '#': pyglet.image.load(base + 'Blocks/block_01.png'),
+    '$': pyglet.image.load(base + 'Crates/crate_15.png'),
+    '.': pyglet.image.load(base + 'Environment/environment_02.png'),
 }
 tile_chars = {
     ' ': '',
@@ -46,7 +53,8 @@ class Game:
         self.player_sprite = make_sprite(tile_images['@'])
 
         self.objects = {}
-        self.batch = pyglet.graphics.Batch()
+        self.main_batch = pyglet.graphics.Batch()
+        self.goal_batch = pyglet.graphics.Batch()
         for (x, y), chars in level.chars.items():
             for char in chars:
                 if char == '@':
@@ -57,7 +65,10 @@ class Game:
                 sprite = make_sprite(image)
                 sprite.x = x * TILE_SIZE
                 sprite.y = y * TILE_SIZE
-                sprite.batch = self.batch
+                if char == '.':
+                    sprite.batch = self.goal_batch
+                else:
+                    sprite.batch = self.main_batch
                 sprite.char = char
                 self.objects.setdefault((x, y), {})[char] = sprite
 
@@ -74,7 +85,8 @@ class Game:
             -(self.level.height+1) * TILE_SIZE / 2,
             0,
         )
-        self.batch.draw()
+        self.main_batch.draw()
+        self.goal_batch.draw()
         self.player_sprite.x = self.player_x * TILE_SIZE
         self.player_sprite.y = self.player_y * TILE_SIZE
         if self.is_won():
@@ -140,7 +152,8 @@ class LevelSelector:
             levels.append(Level(current_name, current_level))
         self.levels = levels
         self.index = 0
-        self.player_sprite = make_sprite(tile_images['@'])
+        self.face_sprite = make_sprite(face_image)
+        self.face_sprite.x = TILE_SIZE / 4
         self.game = None
 
     def draw(self):
@@ -148,14 +161,15 @@ class LevelSelector:
             self.game.draw()
         else:
             levels_on_screen = (window.height // TILE_SIZE)
-            self.player_sprite.y = levels_on_screen // 2 * TILE_SIZE
-            label = pyglet.text.Label(font_size=TILE_SIZE / 2, x=TILE_SIZE)
+            label = pyglet.text.Label(font_size=TILE_SIZE / 2)
+            label.x = TILE_SIZE * 1.5
             for y in range(levels_on_screen):
                 index = (self.index + y - levels_on_screen // 2)
                 label.text = self.levels[index % len(self.levels)].name
-                label.y = (levels_on_screen - y - 1 + 3/8) * TILE_SIZE
+                label.y = (levels_on_screen - y - 1 + 2/8) * TILE_SIZE
                 label.draw()
-            self.player_sprite.draw()
+            self.face_sprite.y = levels_on_screen // 2 * TILE_SIZE
+            self.face_sprite.draw()
 
     def move(self, dx, dy):
         if self.game:
