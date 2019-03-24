@@ -9,6 +9,8 @@ TILE_SIZE = 32
 
 # Images are from https://kenney.nl/assets/sokoban
 
+# For levels, see http://www.sneezingtiger.com/sokoban/levels.html
+
 # For level definition, see "Making your own levels"
 # in http://www.sneezingtiger.com/sokoban/docs.html
 
@@ -172,9 +174,10 @@ class LevelSelector:
             label.x = TILE_SIZE * 1.5
             for y in range(levels_on_screen):
                 index = (self.index + y - levels_on_screen // 2)
-                label.text = self.levels[index % len(self.levels)].name
-                label.y = (levels_on_screen - y - 1 + 2/8) * TILE_SIZE
-                label.draw()
+                if 0 <= index < len(self.levels):
+                    label.text = self.levels[index].name
+                    label.y = (levels_on_screen - y - 1 + 2/8) * TILE_SIZE
+                    label.draw()
             self.face_sprite.y = levels_on_screen // 2 * TILE_SIZE
             self.face_sprite.draw()
 
