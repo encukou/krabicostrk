@@ -5,7 +5,9 @@ import sys
 import pyglet
 
 
-TILE_SIZE = 32
+TILE_SIZE = 32 
+
+#TILE_SIZE means size of one square in pixels
 
 # Images are from https://kenney.nl/assets/sokoban
 
@@ -21,9 +23,17 @@ tile_images = {
     '#': pyglet.image.load(base + 'Blocks/block_01.png'),
     '$': pyglet.image.load(base + 'Crates/crate_15.png'),
     '.': pyglet.image.load(base + 'Environment/environment_02.png'),
+    
+# dictionary "tile_images" assigns images to every character
+
+# '@'--You (the player)    
+# '#'--Walls (the walls will be curved and shadowed automatically)    
+# '$'--Treasure
+# '.'--Target or goal square    
+    
 }
 tile_chars = {
-    ' ': '',
+    ' ': '',    
     '#': '#',
     '$': '$',
     '.': '.',
@@ -32,6 +42,11 @@ tile_chars = {
     '+': '@.',
 }
 
+# dictionary tile_chars indicates all possible situations that may arise
+
+# ' ' (space)--An empty space (floor)
+# '*'--Treasure on a goal area
+# '+'--Player standing on a goal square.
 
 try:
     levels_filename = sys.argv[1]
