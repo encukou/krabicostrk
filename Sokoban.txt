@@ -1,0 +1,18 @@
+<h1>Sokoban</h1>
+
+<p>
+Sokoban je logická hra, v ní hráè posouvá bedny v bludišti a snaí se je umístit na vyznaèené pozice <br>
+(napø. kosoètverce). K naprogramování této hry bude potøeba knihovna pyglet, math a sys.<br>
+Veškeré obrázky, které budou pouity, jsou volnì dostupné na internetové adrese https://kenney.nl/assets/sokoban.
+</p>
+<img src="Sokoban.png">
+<p>
+Abychom nemuseli zvláš kadému obrázku pøidávat sprite, tak si vytvoøíme funkci, <br>
+která to udìlá za nás. Jako atribut funkce bude promìnná image, která bude reprezentovat <br>
+obrázek. Kromì pøidìlování spritù zde i urèíme mìøítko spritu, aby vše mìlo správnou velikost.
+</p>
+<p>
+Vyzkoušíme si naprogramovat hru se tøemi levely. Proto budeme potøebovat tøídu Level, <br>
+kterı bude mít v konstruktoru kromì atributu self i name (0, 1, 2) a char (charakter). <br>
+Uvnitø konstruktoru si nastavíme vıšku a šíøku dané úrovnì.
+</p>
