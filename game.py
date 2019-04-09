@@ -5,7 +5,7 @@ import sys
 import pyglet
 
 
-TILE_SIZE = 32
+TILE_SIZE = 32   # size of one square, in pixels
 
 # Images are from https://kenney.nl/assets/sokoban
 
@@ -16,20 +16,25 @@ TILE_SIZE = 32
 
 base = 'kenney-sokoban-pack/PNG/Default size/'
 face_image = pyglet.image.load(base + 'playerFace.png')
+# Dictionary mapping symbols in level definitions to characters the game uses
 tile_images = {
-    '@': pyglet.image.load(base + 'Player/player_05.png'),
-    '#': pyglet.image.load(base + 'Blocks/block_01.png'),
-    '$': pyglet.image.load(base + 'Crates/crate_15.png'),
-    '.': pyglet.image.load(base + 'Environment/environment_02.png'),
+    '@': pyglet.image.load(base + 'Player/player_05.png'),  # Player
+    '#': pyglet.image.load(base + 'Blocks/block_01.png'),   # Walls
+    '$': pyglet.image.load(base + 'Crates/crate_15.png'),   # Treasure
+    '.': pyglet.image.load(base + 'Environment/environment_02.png'), # An empty
+                                                                     # space
+      
+
+# Dictionary tile_chars indicates all possible situations that may arise
 }
 tile_chars = {
-    ' ': '',
-    '#': '#',
-    '$': '$',
-    '.': '.',
-    '@': '@',
-    '*': '$.',
-    '+': '@.',
+    ' ': '',     # An empty space
+    '#': '#',    # Walls
+    '$': '$',    # Treasure
+    '.': '.',    # Target or goal square
+    '@': '@',    # You (the player)
+    '*': '$.',   # A treasure on a goal square
+    '+': '@.',   # Player standing on a goal square
 }
 
 
