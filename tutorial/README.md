@@ -25,3 +25,8 @@ Vytvoříme si i slovník `objects`, ten bude zatím prázdný, ale vrátíme se
 Rovněž zkontrolujeme i ostatní charaktery a vytvoříme jejich sprity, pro všechny cílové pozice pokladů nastavíme jejich vykreslování na `goal_batch` a pro ostatní charaktery
 bude vykreslování `main_batch`.
 
+Uvnitř třídy Game si vytvoříme funkci `is_won`. V ní budeme kontrolovat, zda poklad je na cílové pozici. Podle toho zjistíme jestli hráč vyhrál.
+Další důležitou funkcí uvnitř třídy Game je `move`. Tato funkce bude zajišťovat pohyb objektů. Nejprve zkontrolujeme, zda hráč už nevyhrál, protože
+v tom případě by se nepotřeboval pohybovat. Pomocí proměnných `new_x` a `new_y` budeme vytvářet nové souřadnice na obou osách. Dále musíme zajistit to, aby se hráč nemohl dostat
+za zdi, které ohraničují hráčské pole. Do n-tice `bloking_objects` si nejprve vložíme všechny objekty. Když bude za hráčem poklad, který potřebuje posunout, tak mu to umožní
+proměnné `behind_x` a `behind_y`. Pomocí n-tice `behind_objects` budeme kontrolovat, jestli je za tlačeným pokladem místo. Pakliže tam místo nebude hráči nepůjde poklad posunout.
