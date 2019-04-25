@@ -30,3 +30,12 @@ Další důležitou funkcí uvnitř třídy Game je `move`. Tato funkce bude zaj
 v tom případě by se nepotřeboval pohybovat. Pomocí proměnných `new_x` a `new_y` budeme vytvářet nové souřadnice na obou osách. Dále musíme zajistit to, aby se hráč nemohl dostat
 za zdi, které ohraničují hráčské pole. Do n-tice `bloking_objects` si nejprve vložíme všechny objekty. Když bude za hráčem poklad, který potřebuje posunout, tak mu to umožní
 proměnné `behind_x` a `behind_y`. Pomocí n-tice `behind_objects` budeme kontrolovat, jestli je za tlačeným pokladem místo. Pakliže tam místo nebude hráči nepůjde poklad posunout.
+
+Abychom si na začátku mohli vybrat level, který si chceme zahrát, tak se musíme dostat do souboru "levels.txt". K tomu slouží níže vložený kód.
+.
+```
+try:
+    levels_filename = sys.argv[1]
+except IndexError:
+    levels_filename = 'levels.txt'
+```
