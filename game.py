@@ -89,25 +89,36 @@ class Game:
 
 
     def draw(self):
+        # Calculate how much to zoom in, based on the window size
+        # and size of the level
         scale = min(
             window.width / (self.level.width + 3) / TILE_SIZE,
             window.height / (self.level.height + 3) / TILE_SIZE,
         )
+        # Move the origin -- coordinate (0, 0) -- to the center of the window
         pyglet.gl.glTranslatef(window.width / 2, window.height / 2, 1)
+        # Zoom in/out
         pyglet.gl.glScalef(scale, scale, 1)
+        # Move the origin to the lower left corner of the level
         pyglet.gl.glTranslatef(
             -(self.level.width+1) * TILE_SIZE / 2,
             -(self.level.height+1) * TILE_SIZE / 2,
             0,
         )
+        # Draw the crates and walls
         self.main_batch.draw()
+        # Draw the goal markers
         self.goal_batch.draw()
+        # Update the player sprite position
         self.player_sprite.x = self.player_x * TILE_SIZE
         self.player_sprite.y = self.player_y * TILE_SIZE
         if self.is_won():
+            # If the level is won, make the player jump
             jump = abs(math.sin(time.time() * 10))
             self.player_sprite.y += jump * TILE_SIZE / 4
+        # Draw the player sprite
         self.player_sprite.draw()
+        # Re-set the transformation set up in the beginning
         pyglet.gl.glLoadIdentity()
 
     def move(self, dx, dy):
