@@ -26,16 +26,36 @@ Rovněž zkontrolujeme i ostatní charaktery a vytvoříme jejich sprity, pro v�
 bude vykreslování `main_batch`.
 
 Uvnitř třídy Game si vytvoříme funkci `is_won`. V ní budeme kontrolovat, zda poklad je na cílové pozici. Podle toho zjistíme jestli hráč vyhrál.
+Třída `Game` bude mít také vlastní funkci `draw`, v níž si nejprve určíme měřítko `scale` hry v závislosti na výšce a šířce okna. Na začátku funkce posuneme počátek na střed okna. V další části
+budeme pomocí posouvání souřadnic počátku vykreslovat různé druhy charakterů (např. stěny, cílové pozice a hráče). Budeme tu i kontrolovat funkci `is_won`, pakliže hráč vyhraje, tak to oslavíme
+radostnými výskoky hráče.
+
+```
+if self.is_won():
+    jump = abs(math.sin(time.time() * 10))
+    self.player_sprite.y += jump * TILE_SIZE / 4
+```
+
 Další důležitou funkcí uvnitř třídy Game je `move`. Tato funkce bude zajišťovat pohyb objektů. Nejprve zkontrolujeme, zda hráč už nevyhrál, protože
 v tom případě by se nepotřeboval pohybovat. Pomocí proměnných `new_x` a `new_y` budeme vytvářet nové souřadnice na obou osách. Dále musíme zajistit to, aby se hráč nemohl dostat
 za zdi, které ohraničují hráčské pole. Do n-tice `bloking_objects` si nejprve vložíme všechny objekty. Když bude za hráčem poklad, který potřebuje posunout, tak mu to umožní
 proměnné `behind_x` a `behind_y`. Pomocí n-tice `behind_objects` budeme kontrolovat, jestli je za tlačeným pokladem místo. Pakliže tam místo nebude hráči nepůjde poklad posunout.
 
 Abychom si na začátku mohli vybrat level, který si chceme zahrát, tak se musíme dostat do souboru "levels.txt". K tomu slouží níže vložený kód.
-.
+
 ```
 try:
     levels_filename = sys.argv[1]
 except IndexError:
     levels_filename = 'levels.txt'
 ```
+
+Nyní by bylo vhodné vytvořit třídu, díky které si budeme vybírat level, který si chceme zahrát. Tuto třídu pojmenujeme `LevelSelector`, v jeho konstruktoru si vytvoříme prázdný seznam `levels`,
+proměnnou `current_y`, pro níž nastavíme počáteční hodnotu na nulu, dále proměnnou `current_name`, která bude sice nastavena na prázdný řetězec, ovšem díky funkci `sys.argv` se později změní.
+Neměli bychom zapomenout na proměnnou `current_level`, díky níž budeme přidávat námi zvolený level do seznamu `levels` a bude zatím vypadat takto (`current_level = {}`).
+Poté co se otevře soubor `levels.txt` použijeme funkci `rstrip()`, která vrací kopii řetězce, v němž byly všechny znaky odstraněny z konce řetězce. Následně budeme kontrolovat všechny charaktery
+v `tile_chars`. Pokud se nebudou rovnat prázdnému prostoru, tak do proměnné `current_level` vložíme seznam, který bude obsahovat informace o aktuální pozici. Jestliže se charakter rovná prázdému
+prostoru, tak zvýšíme proměnnou `current_y` o jednu jednotku. Když už bude v proměnné `current_level` informace o tom jaký level bude chtít hráč hrát, tak tento level přídáme do seznamu `levels`.
+Poté co si hráč vybere level a začne jej hrát, tak bychom měli vrátit jméno a pozici při vybírání levelu na počáteční hodnoty. Rovněž vrátíme `current_level` do počátečního stavu.
+
+
