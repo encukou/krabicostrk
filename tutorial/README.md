@@ -30,7 +30,7 @@ Třída `Game` bude mít také vlastní funkci `draw`, v níž si nejprve určí
 budeme pomocí posouvání souřadnic počátku vykreslovat různé druhy charakterů (např. stěny, cílové pozice a hráče). Budeme tu i kontrolovat funkci `is_won`, pakliže hráč vyhraje, tak to oslavíme
 radostnými výskoky hráče.
 
-```
+```python
 if self.is_won():
     jump = abs(math.sin(time.time() * 10))
     self.player_sprite.y += jump * TILE_SIZE / 4
@@ -43,7 +43,7 @@ proměnné `behind_x` a `behind_y`. Pomocí n-tice `behind_objects` budeme kontr
 
 Abychom si na začátku mohli vybrat level, který si chceme zahrát, tak se musíme dostat do souboru "levels.txt". K tomu slouží níže vložený kód.
 
-```
+```python
 try:
     levels_filename = sys.argv[1]
 except IndexError:
@@ -57,5 +57,40 @@ Poté co se otevře soubor `levels.txt` použijeme funkci `rstrip()`, která vra
 v `tile_chars`. Pokud se nebudou rovnat prázdnému prostoru, tak do proměnné `current_level` vložíme seznam, který bude obsahovat informace o aktuální pozici. Jestliže se charakter rovná prázdému
 prostoru, tak zvýšíme proměnnou `current_y` o jednu jednotku. Když už bude v proměnné `current_level` informace o tom jaký level bude chtít hráč hrát, tak tento level přídáme do seznamu `levels`.
 Poté co si hráč vybere level a začne jej hrát, tak bychom měli vrátit jméno a pozici při vybírání levelu na počáteční hodnoty. Rovněž vrátíme `current_level` do počátečního stavu.
+Vytvoříme si zde proměnnou `index`, kterou použijeme u vykreslování výběru levelů.
 
+I třída `LevelSelector` bude mít svou funkci `draw`. V této funkci bude probíhat vykreslování toho co vydíme jako první při spuštění hry.
 
+![Obrázek hry](screenshot2.png)
+
+Všechny nápisy levelů budou v podobě labelů. Pomocí proměnné `index` se při vybírání levelů  budou posouvat labely nahoru a dolů. Obličej bude mít vzhledem k oknu stále stejnou pozici.
+
+Pro pohyb hráče v okně musíme vytvořit funkce `move`, která bude mít kromě parametru `self` i parametry `dx` a `dy` pro pohyb na obou osách. Aby se hráč dostal do levelu, který chce hrát,
+tak potřebujeme funkci `enter`, ta obstará načtení levelu. Podobné to bude u funkce `exit`, když bude chtít hráč ukončit hru, tak zavoláme tuto funkci. V neposlední řadě potřebujeme metodu
+`tick`, ta bude ovšem obsahovat jen příkaz `pass` (nic se nestane). K této metodě budeme potřebovat ještě časovač, díky němuž se bude okno vykreslovat tak rychle jak budeme chtít.
+
+```python
+def move(self, dx, dy):
+    if self.game:
+        self.game.move(dx, dy)
+    else:
+        self.index = (self.index - dy) % len(self.levels)
+        if dx > 0:
+            self.enter()
+
+def enter(self):
+    if not self.game:
+        self.game = Game(self.levels[self.index])
+    elif self.game.is_won():
+        self.game = None
+
+def exit(self):
+    if self.game:
+        self.game = None
+        return True
+
+def tick(self, dt):
+    pass
+```
+
+Na konci nesmí chybět funkce `on_draw`, která zajišťuje vykreslování celého okna a `on_key_press`, jenž nám umožňuje ovládat hráče pomocí šipek nebo vybírat levely.
